@@ -1,0 +1,66 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
+Shivam Bajaj
+BMI 510
+
+Q1
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+
+cdf <- pnorm(11950, 12000, 200)
+cdf
+```
+Q2
+```{r}
+prob2 <- qnorm(0.05, 12000, 200)
+prob2
+```
+Q3
+```{r}
+prob3 <- dbinom(3,6,0.5)
+prob3
+```
+Q4
+```{r}
+mtcars$mpg
+mtcars[["mpg"]]
+```
+Q5
+```{r}
+dplyr::select(mtcars,mpg)
+print("select returns column as a dataframe")
+dplyr::pull(mtcars,mpg)
+print("pull returns column as a vector")
+```
+Q6
+```{r}
+sum((1:10)^2)
+```
+Q7
+```{r}
+(1:10) %*% t(1:10)
+```
+Q8
+```{r}
+MnSd <- function(x, ...){
+  mea <- mean(x, ...)
+  sdx <- sd(x, ...)
+  c("Mean" = mea , "Std" = sdx)
+}
+
+MnSd(mtcars$mpg, na.rm = TRUE)
+```
+Q9
+```{r}
+library(janitor)
+tabyl(mtcars, cyl, gear) %>% adorn_totals(c("row", "col"))
+```
+Q10
+```{r}
+tabyl(mtcars, cyl, gear) %>% adorn_totals(c("row", "col")) %>% adorn_percentages(c("all"))
+```
