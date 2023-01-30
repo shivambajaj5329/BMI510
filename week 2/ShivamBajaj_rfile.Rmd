@@ -1,0 +1,65 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
+```{r}
+library(tidyverse)
+```
+
+Q5
+```{r}
+probtoodds <- function(p){
+  return(p/(1-p))
+}
+  
+oddstoprob <- function(o){
+  return(o/(1+o))
+}
+```
+Q6
+```{r}
+curve(probtoodds, from=0, to=1,xlab = 'P(A)',ylab = 'O(A)',main="Prob2Odds")
+curve(oddstoprob, from=1, to=100,ylab = 'P(A)',xlab = 'O(A)',main="Odds2Prob")
+```
+
+Q8
+```{r}
+sample_generator <- function(dummy_var){
+  results <- runif(12 , min=0,max=1)
+  return(sum(results)-6)
+}
+sample_list <- sapply(1:1000 , sample_generator)
+hist(sample_list)
+
+library(ggplot2)
+ggplot(data = data.frame(sample_list), aes(x = sample_list)) +
+  geom_histogram() +
+  ggtitle("Histogram of sample_list using ggplot2") +
+  xlab("Sum") +
+  ylab("Frequency")
+```
+Q9
+```{r}
+sample_generator <- function(dummy_var){
+  results <- runif(12 , min=0,max=1)
+  return(sum(results)-6)
+}
+
+normal_sample_gen <- function(){
+  results <- sample_generator()
+  return(rnorm(1, mean = results, sd=1))
+}
+
+single_random_var <- normal_sample_gen()
+
+```
+Q10
+```{r}
+df <- read_csv("https://jlucasmckay.bmi.emory.edu/global/bmi510/simpson_data.csv")
+library(ggplot2)
+ggplot(df, aes(x = Exercise, y = Cholesterol, color = factor(Age))) +
+  geom_point(alpha = 0.5, size = 0.8) +
+  geom_smooth(method = 'lm', show.legend = FALSE)
+
+```
