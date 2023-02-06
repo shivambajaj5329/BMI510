@@ -1,0 +1,160 @@
+---
+title: "Data Wrangling"
+author: "J. Lucas McKay"
+date: "9/15/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = T, warning = F, message = F)
+```
+
+## Filling omitted repetitions
+
+In one common output format, repeated values are omitted, and are only recorded when they change.
+Let's download some deidentified gait data and have a look.
+These are actual data; however, the dates have been rotated by a random amount for each patient to
+protect privacy (while allowing the calculation of durations.)
+
+```{r}
+library(tidyverse)
+gait_download = read_csv("https://jlucasmckay.bmi.emory.edu/global/bmi510/gait.csv")
+```
+Note that there are usually two rows for each participant - one for the participant-level
+information and one for the date of the recording. We can fill the dataset so that it is easier
+to manipulate.
+
+```{r}
+gait_filled = gait_download |> fill(sex,dob,dw_icd)
+view(gait_filled)
+```
+Note that this method just fills down! If you want to stop at the boundaries of a given participant,
+you have to group.
+
+```{r}
+gait_filled = gait_download |>
+  group_by(record_id) |>
+  fill(sex,dob,dw_icd) |>
+  ungroup()
+```
+
+Now that we have filled down, we can discard the extraneous patient-level rows.
+```{r}
+gait = gait_filled |>  filter(!is.na(redcap_repeat_instrument))
+gait
+```
+
+
+Note that it is also nice to present some of the data as a well-formatted table.
+We can do that with `slice_sample` and the `knitr` package.
+
+```{r}
+set.seed(510)
+gait_sample = gait |>
+  select(record_id,sex,speed,cadence) |> 
+  na.exclude() |> 
+  group_by(sex) |>
+  slice_sample(n = 6)
+gait_sample |> knitr::kable() |> kableExtra::kable_styling(full_width=F,position = "left")
+```
+
+
+
+## Joining datasets
+
+You will end up doing a lot of `join`s when you work with medical data.
+Here's a nice summary of how the different methods of joining work in the `dplyr` package: https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf
+
+The ICD codes are not that easy to use, so let's join a dataset with a lookup table.
+Most of the joins I do are `left_join`, which returns all rows from the first input and 
+all columns from both inputs.
+
+```{r}
+icd = read_csv("https://jlucasmckay.bmi.emory.edu/global/bmi510/icd.csv")
+```
+There are too many classes here, so let's simplify. We can use `case_when` to recode this,
+although it has a very curious syntax.
+
+```{r}
+icd$group = case_when(
+grepl("agitans|arkinson",icd$diagnosis) ~ "PD",
+grepl("sential",icd$diagnosis) ~ "ET",
+T ~ "Other"
+)
+```
+
+Now we can join this diagnostic information to the data.
+
+```{r}
+# gait = gait |> left_join(icd) # doesnt' work!
+gait = gait |> rename(icd = dw_icd) |> left_join(icd)
+
+gait2 = gait
+gait2$icd = gait2$dw_icd
+joined_data = left_join(gait2,icd)
+
+```
+
+Finally, we can reorder the columns for ease of use:
+
+```{r}
+gait = gait |> select(-starts_with("redcap")) |> select(-study_id) |> select(record_id, group, diagnosis, icd:sex, everything())
+
+gait = gait |> arrange(group,dob)
+gait
+```
+
+And make a plot.
+```{r}
+gait |>
+  filter(group %in% c("PD","ET")) |> 
+  ggplot(aes(x = speed, color = group)) + geom_density() +
+  theme_minimal() +
+  labs(color = "Study Group")
+```
+
+
+# Pivoting
+
+The other hugely important topic for data wrangling is pivoting (mostly longer).
+Let's look at this with some typical biomarker data.
+
+```{r}
+csf = read_csv("https://jlucasmckay.bmi.emory.edu/global/bmi510/csf.csv")
+```
+
+How are we going to plot this? Well, the first step is usually to totally melt the data:
+
+```{r}
+# how does column selection work?
+csf_long = csf |> pivot_longer(-Group, values_to = "Expression", names_to = "Biomarker")
+```
+
+Although this is not the most easy way to think about the data, it does accommodate missing
+data, different numbers of observations, etc. Once it is in this format, plotting is a snap.
+We map Group to x, Expression to y, and Biomarker to the plot number.
+
+```{r}
+csf_long |> ggplot(aes(Group,Expression)) + geom_boxplot() + facet_wrap(~Biomarker, scales = "free_y") + theme_minimal()
+
+csf_long |> ggplot(aes(Biomarker,Expression,fill=Biomarker)) + geom_boxplot() + facet_wrap(~Group, scales = "free_y") + theme_minimal()
+
+```
+
+# Making simple summary statistics
+
+You can also group the melted data to create summary statistics pretty easily.
+```{r}
+sum_stats = csf_long |> group_by(Biomarker,Group) |> summarize(N = sum(!is.na(Expression)), Mean = mean(Expression, na.rm = T), SD = sd(Expression, na.rm = T))
+sum_stats |> knitr::kable() |> kableExtra::kable_styling(full_width=F,position = "left")
+
+```
+
+```{r}
+sum_stats |> write_csv("summary.csv",na="")
+system("open summary.csv")
+```
+
+
+
+
