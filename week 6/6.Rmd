@@ -1,0 +1,210 @@
+---
+title: "Midterm"
+output:
+  html_document: default
+  pdf_document: default
+date: "2023-02-26"
+author: "Shivam Bajaj"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+
+```
+
+## R Markdown
+
+```{r}
+data <- read_csv("https://jlucasmckay.bmi.emory.edu/global/mckay_2021/S1.csv")
+data <- select(data, Age, Sex, num_falls_6_mo)
+data <- drop_na(data)
+data <- filter(data, !grepl("bat112", row.names(data)))
+print(data)
+```
+```{r}
+obs <- group_by(data, Sex)
+obs <- summarize(obs, n = n())
+
+print(obs)
+
+age_summary <- group_by(data, Sex)
+age_summary <- summarize(age_summary, avg_age = mean(Age), sd_age = sd(Age))
+print(age_summary)
+
+falls_summary <- group_by(data, Sex)
+falls_summary <- summarize(falls_summary, avg_falls = mean(num_falls_6_mo), sd_falls = sd(num_falls_6_mo))
+print(falls_summary)
+
+
+overall_obs <- summarize(data, n = n())
+print(overall_obs)
+
+overall_age_summary <- summarize(data, avg_age = mean(Age), sd_age = sd(Age))
+print(overall_age_summary)
+
+overall_falls_summary <- summarize(data, avg_falls = mean(num_falls_6_mo), sd_falls = sd(num_falls_6_mo))
+print(overall_falls_summary)
+
+```
+
+```{r}
+female_data <- filter(data, Sex == "Female")
+male_data <- filter(data, Sex == "Male")
+
+mean_age_female <- mean(female_data$Age)
+mean_age_male <- mean(male_data$Age)
+
+diff_means <- mean_age_female - mean_age_male
+cat("Difference in sample means: ", diff_means)
+
+var_female <- var(female_data$Age)
+var_male <- var(male_data$Age)
+n_female <- length(female_data$Age)
+n_male <- length(male_data$Age)
+pooled_var <- ((n_female - 1) * var_female + (n_male - 1) * var_male) / (n_female + n_male - 2)
+cat("\nPooled variance: ", pooled_var, "\n")
+
+t_stat <- diff_means / sqrt(pooled_var * (1/n_female + 1/n_male))
+cat("Test statistic: ", t_stat, "\n")
+
+df <- n_female + n_male - 2
+p_value <- 2 * pt(abs(t_stat), df = df, lower.tail = FALSE)
+cat("p-value: ", p_value, "\n")
+
+t_test_result <- t.test(Age ~ Sex, data = data, var.equal = TRUE)
+cat("t-test p-value: ", t_test_result$p.value, "\n")
+```
+```{r}
+lambda_seq <- seq(1, 10, by = 0.01)
+loglik <- sapply(lambda_seq, function(lambda) {
+  sum(dpois(data$num_falls_6_mo, lambda, log = TRUE))
+})
+
+plot(lambda_seq, loglik, type = "l", xlab = "Lambda", ylab = "Log-Likelihood")
+
+
+lambda_mle1 <- lambda_seq[which.max(loglik)]
+cat("lambdaMLE1: ", lambda_mle1, "\n")
+```
+```{r}
+hist(data$num_falls_6_mo, main = "Histogram of num_falls_6_mo", xlab = "Num Falls in 6 Months")
+boxplot(data$num_falls_6_mo, horizontal = FALSE, main = "Boxplot of num_falls_6_mo", xlab = "Num Falls in 6 Months")
+```
+```{r}
+data_clean <- data[data$num_falls_6_mo != 50 & data$num_falls_6_mo != 180,]
+
+lambda_seq <- seq(0.1, 10, by = 0.01)
+loglik <- sapply(lambda_seq, function(lambda) {
+  sum(dpois(data_clean$num_falls_6_mo, lambda, log = TRUE))
+})
+
+plot(lambda_seq, loglik, type = "l", xlab = "Lambda", ylab = "Log-Likelihood")
+
+lambda_mle2 <- lambda_seq[which.max(loglik)]
+cat("lambdamle2: ", lambda_mle2, "\n")
+```
+```{r}
+
+loglik1 <- sum(dpois(data_clean$num_falls_6_mo, lambda_mle1, log = TRUE))
+loglik2 <- sum(dpois(data_clean$num_falls_6_mo, lambda_mle2, log = TRUE))
+
+cat(loglik1,loglik2)
+
+#In comparison to the log likelihood value of -105.6501, the log likelihood value of -236.8935 is higher. 
+
+```
+
+```{r}
+total_campaign_expense = (365000*100)/12
+cat(round(total_campaign_expense, digits = 0))
+```
+```{r}
+spending <- read_csv("https://jlucasmckay.bmi.emory.edu/global/bmi510/campaign-spending.csv")
+
+
+spending <- spending[, c(1, ncol(spending))]
+
+col_names = names(spending)
+new_row <- data.frame(r = "George Santos (R-NY)",t = total_campaign_expense)
+names(new_row) <- col_names
+spending <- rbind(spending, new_row)
+
+spending
+
+```
+```{r}
+
+spending$Rank <- rank(spending$`Total Spent`)
+
+n_less_than_santos <- sum(spending$`Total Spent` < total_campaign_expense)
+cat("Number of representatives that spent less than Santos: ", n_less_than_santos, "\n")
+
+prop_less_than_santos <- n_less_than_santos / nrow(spending)
+
+cat("Proportion of representatives that spent less than Santos: ", round(prop_less_than_santos, 2), "\n")
+
+```
+```{r}
+ggplot(spending, aes(x = `Total Spent`)) +
+  stat_ecdf(size = 1) +
+  geom_vline(xintercept = total_campaign_expense, color = "red") +
+    geom_hline(yintercept = ecdf(spending$`Total Spent`)(total_campaign_expense), color = "red") +
+  labs(title = "Empirical CDF of Total Campaign Spending",
+       x = "Total Spent (USD)",
+       y = "Cumulative Probability") +
+  theme_bw()
+```
+```{r}
+spending$Rank <- NULL
+
+spending_undoc <- subset(spending, Representative != "George Santos (R-NY)")
+
+spending_undoc$undocumented <- spending_undoc$`Total Spent` * 0.02
+santos_spending <- round(total_campaign_expense * 0.12, 2)
+santos_row <- data.frame(Representative = "George Santos (R-NY)", `Total Spent` = total_campaign_expense, undocumented = santos_spending)
+print(santos_row)
+#we assume that everyone else does not have documents worth 2% and santos does not have documents for 12%
+
+col_names = names(spending_undoc)
+names(santos_row) <- col_names
+
+
+spending_undoc <- rbind(spending_undoc, santos_row)
+df_undoc_sorted <- spending_undoc[order(spending_undoc$undocumented), ]
+df_totalspent_sorted <- spending_undoc[order(spending_undoc$`Total Spent`), ]
+
+ggplot(spending_undoc, aes(x = `undocumented`)) +
+  stat_ecdf(size = 1) +
+  geom_vline(xintercept = santos_spending, color = "red") +
+    geom_hline(yintercept = ecdf(spending_undoc$`undocumented`)(santos_spending), color = "red") +
+  labs(title = "Empirical CDF of Total Campaign Spending",
+       x = "Total Spent (USD)",
+       y = "Cumulative Probability") +
+  theme_bw()
+
+```
+```{r}
+quantile_santos <- ecdf(spending$`Total Spent`)(total_campaign_expense)
+proportion_more_spending <- 1 - quantile_santos
+num_more_spending <- round(proportion_more_spending * nrow(spending))
+
+cat(num_more_spending,"had more total spendings \n")
+
+quantile_santos_undoc <- ecdf(spending_undoc$undocumented)(santos_spending)
+proportion_more_spending_undocumented <- 1 - quantile_santos_undoc
+num_more_spending_undocumented <- round(proportion_more_spending_undocumented * nrow(spending_undoc))
+
+cat(num_more_spending_undocumented,"had more undocumented spendings \n")
+
+
+if (quantile_santos > quantile_santos_undoc) {
+  atypicality <- "Santos' total spending is more atypical than his undocumented spending."
+} else if (quantile_santos < quantile_santos_undoc) {
+  atypicality <- "Santos' undocumented spending is more atypical than his total spending."
+} else {
+  atypicality <- "Santos' total and undocumented spending are equally atypical."
+}
+
+cat(atypicality)
+```

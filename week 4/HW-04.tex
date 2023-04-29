@@ -1,0 +1,630 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same} % disable monospaced font for URLs
+\hypersetup{
+  pdftitle={Homework 4},
+  pdfauthor={Shivam Bajaj},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Homework 4}
+\author{Shivam Bajaj}
+\date{February 6, 2023}
+
+\begin{document}
+\maketitle
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  There is a dataset of clinical variables and self-reported fall
+  history from people with Parkinson's disease available at
+  {[}\url{https://jlucasmckay.bmi.emory.edu/global/mckay_2021/S1.csv}{]}.
+  Identify the sample mean and sample standard deviation of the
+  \texttt{Age} variable. Exclude any cases under 35 years old. \textbf{1
+  point}
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+
+\NormalTok{data }\OtherTok{\textless{}{-}} \FunctionTok{read.csv}\NormalTok{(}\StringTok{"https://jlucasmckay.bmi.emory.edu/global/mckay\_2021/S1.csv"}\NormalTok{)}
+\NormalTok{data }\OtherTok{\textless{}{-}}\NormalTok{ data[data}\SpecialCharTok{$}\NormalTok{Age }\SpecialCharTok{\textgreater{}=} \DecValTok{35}\NormalTok{,]}
+
+\NormalTok{m }\OtherTok{\textless{}{-}} \FunctionTok{mean}\NormalTok{(data}\SpecialCharTok{$}\NormalTok{Age)}
+\NormalTok{s }\OtherTok{\textless{}{-}} \FunctionTok{sd}\NormalTok{(data}\SpecialCharTok{$}\NormalTok{Age)}
+\NormalTok{l }\OtherTok{\textless{}{-}} \FunctionTok{length}\NormalTok{(data}\SpecialCharTok{$}\NormalTok{Age)}
+\FunctionTok{print}\NormalTok{(m)}
+\DocumentationTok{\#\# [1] 67.36935}
+
+\FunctionTok{print}\NormalTok{(s)}
+\DocumentationTok{\#\# [1] 7.418488}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  Calculate the likelihood of the estimates for the mean and standard
+  deviation you have obtained given the sample. (Assume a normal
+  distribution.) as you sweep the estimate of average age through ±2
+  years. Specifically, create a function \texttt{Lik(a)} that returns
+  the likelihood of the data given an estimate of the population mean
+  age \texttt{a} \textbf{(1/2 point)} and plot the likelihood as a
+  function of \texttt{a} as you sweep it over ±2 years. \textbf{(1/2
+  point)}
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Define the likelihood function}
+
+\NormalTok{Age }\OtherTok{\textless{}{-}}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{Age}
+\NormalTok{Lik }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(a) \{}
+
+\NormalTok{  likelihood }\OtherTok{\textless{}{-}} \FunctionTok{prod}\NormalTok{(}\FunctionTok{dnorm}\NormalTok{(Age, }\AttributeTok{mean =}\NormalTok{ a, }\AttributeTok{sd =}\NormalTok{ s))}
+  \FunctionTok{return}\NormalTok{(likelihood)}
+\NormalTok{\}}
+
+
+\FunctionTok{library}\NormalTok{(ggplot2)}
+
+\NormalTok{a\_range }\OtherTok{\textless{}{-}} \FunctionTok{seq}\NormalTok{(}\AttributeTok{from =}\NormalTok{ m }\SpecialCharTok{{-}} \DecValTok{2}\NormalTok{, }\AttributeTok{to =}\NormalTok{ m }\SpecialCharTok{+} \DecValTok{2}\NormalTok{, }\AttributeTok{by =} \FloatTok{0.01}\NormalTok{)}
+\NormalTok{likelihood\_values }\OtherTok{\textless{}{-}} \FunctionTok{sapply}\NormalTok{(a\_range, Lik)}
+
+
+\FunctionTok{ggplot}\NormalTok{(}\FunctionTok{data.frame}\NormalTok{(}\AttributeTok{a =}\NormalTok{ a\_range, }\AttributeTok{likelihood =}\NormalTok{ likelihood\_values), }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ a, }\AttributeTok{y =}\NormalTok{ likelihood)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_line}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{ggtitle}\NormalTok{(}\StringTok{"Likelihood as a function of the estimate of the population mean age"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{"Estimate of the population mean age (a)"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{ylab}\NormalTok{(}\StringTok{"Likelihood"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{HW-04_files/figure-latex/unnamed-chunk-2-1.pdf}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{2}
+\tightlist
+\item
+  Now plot the \emph{log} likelihood as you sweep the estimate of
+  average age through ±2 years. \textbf{(1 point)} \emph{(Note that you
+  have to use a sum, not a product, here.)}
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+
+\NormalTok{Age }\OtherTok{\textless{}{-}}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{Age}
+\NormalTok{logLik }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(a) \{}
+
+\NormalTok{  likelihood }\OtherTok{\textless{}{-}} \FunctionTok{sum}\NormalTok{(}\FunctionTok{dnorm}\NormalTok{(Age, }\AttributeTok{mean =}\NormalTok{ a, }\AttributeTok{sd =}\NormalTok{ s, }\AttributeTok{log =} \ConstantTok{TRUE}\NormalTok{))}
+  \FunctionTok{return}\NormalTok{(likelihood)}
+\NormalTok{\}}
+
+
+\FunctionTok{library}\NormalTok{(ggplot2)}
+
+\NormalTok{a\_range }\OtherTok{\textless{}{-}} \FunctionTok{seq}\NormalTok{(}\AttributeTok{from =}\NormalTok{ m }\SpecialCharTok{{-}} \DecValTok{2}\NormalTok{, }\AttributeTok{to =}\NormalTok{ m }\SpecialCharTok{+} \DecValTok{2}\NormalTok{, }\AttributeTok{by =} \FloatTok{0.01}\NormalTok{)}
+\NormalTok{log\_likelihood\_values }\OtherTok{\textless{}{-}} \FunctionTok{sapply}\NormalTok{(a\_range, logLik)}
+
+
+\FunctionTok{ggplot}\NormalTok{(}\FunctionTok{data.frame}\NormalTok{(}\AttributeTok{a =}\NormalTok{ a\_range, }\AttributeTok{log\_likelihood =}\NormalTok{ log\_likelihood\_values), }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ a, }\AttributeTok{y =}\NormalTok{ log\_likelihood)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_line}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{ggtitle}\NormalTok{(}\StringTok{"Likelihood as a function of the estimate of the population mean age"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{"Estimate of the population mean age (a)"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{ylab}\NormalTok{(}\StringTok{"Log Likelihood"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{HW-04_files/figure-latex/unnamed-chunk-3-1.pdf}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{3}
+\tightlist
+\item
+  Using the answers for the last two questions, use a grid-based
+  approach to find the maximum likelihood estimator for \texttt{a}.
+  \textbf{(1/2 point)} Do the same for the maximum log-likelihood
+  estimator. \textbf{(1/2 point)} Do they differ?
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+
+\NormalTok{grid }\OtherTok{\textless{}{-}} \FunctionTok{seq}\NormalTok{(}\AttributeTok{from =} \FunctionTok{min}\NormalTok{(Age), }\AttributeTok{to =} \FunctionTok{max}\NormalTok{(Age), }\AttributeTok{by =} \DecValTok{1}\NormalTok{)}
+
+\CommentTok{\#assigning a empty vector of length grid}
+\NormalTok{lik\_values }\OtherTok{\textless{}{-}} \FunctionTok{numeric}\NormalTok{(}\FunctionTok{length}\NormalTok{(grid))}
+\NormalTok{loglik\_values }\OtherTok{\textless{}{-}} \FunctionTok{numeric}\NormalTok{(}\FunctionTok{length}\NormalTok{(grid))}
+
+\CommentTok{\#calculating log likelihood and likelihood for all values in grid}
+\ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\FunctionTok{length}\NormalTok{(grid)) \{}
+\NormalTok{  lik\_values[i] }\OtherTok{\textless{}{-}} \FunctionTok{Lik}\NormalTok{(grid[i])}
+\NormalTok{  loglik\_values[i] }\OtherTok{\textless{}{-}} \FunctionTok{logLik}\NormalTok{(grid[i])}
+\NormalTok{\}}
+
+\CommentTok{\#calculating max likelihood and log likelihood}
+\NormalTok{max\_index\_likelihood }\OtherTok{\textless{}{-}} \FunctionTok{which.max}\NormalTok{(lik\_values)}
+\NormalTok{max\_index\_loglikelihood }\OtherTok{\textless{}{-}} \FunctionTok{which.max}\NormalTok{(loglik\_values)}
+
+\NormalTok{a\_hat\_likelihood }\OtherTok{\textless{}{-}}\NormalTok{ grid[max\_index\_likelihood]}
+\NormalTok{a\_hat\_loglikelihood }\OtherTok{\textless{}{-}}\NormalTok{ grid[max\_index\_loglikelihood]}
+
+
+\FunctionTok{cat}\NormalTok{(}\StringTok{"liklihood age"}\NormalTok{,a\_hat\_likelihood)}
+\DocumentationTok{\#\# liklihood age 67}
+\FunctionTok{cat}\NormalTok{(}\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{log liklihood age"}\NormalTok{, a\_hat\_loglikelihood)}
+\DocumentationTok{\#\# }
+\DocumentationTok{\#\# log liklihood age 67}
+
+\CommentTok{\#we see that they do not differ.}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{4}
+\tightlist
+\item
+  One of the things we noted was that using the sample standard
+  deviation to estimate the population standard deviation can bias the
+  estimate. Therefore, we often see \texttt{N-1} normalization in the
+  standard deviation equation instead of \texttt{N}. Calculate and
+  compare the likelihood of the data under the biased and unbiased
+  estimators for the standard deviation. Which estimate for the standard
+  deviation is larger? Which estimate is more likely? \textbf{(1 point)}
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+
+
+\NormalTok{bias\_sd }\OtherTok{\textless{}{-}} \FunctionTok{sqrt}\NormalTok{(}\FunctionTok{sum}\NormalTok{((data}\SpecialCharTok{$}\NormalTok{Age }\SpecialCharTok{{-}} \FunctionTok{mean}\NormalTok{(data}\SpecialCharTok{$}\NormalTok{Age))}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{) }\SpecialCharTok{/} \FunctionTok{length}\NormalTok{(data}\SpecialCharTok{$}\NormalTok{Age))}
+\NormalTok{unbias\_sd }\OtherTok{\textless{}{-}} \FunctionTok{sqrt}\NormalTok{(}\FunctionTok{sum}\NormalTok{((data}\SpecialCharTok{$}\NormalTok{Age }\SpecialCharTok{{-}} \FunctionTok{mean}\NormalTok{(data}\SpecialCharTok{$}\NormalTok{Age))}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{) }\SpecialCharTok{/}\NormalTok{ (}\FunctionTok{length}\NormalTok{(data}\SpecialCharTok{$}\NormalTok{Age) }\SpecialCharTok{{-}} \DecValTok{1}\NormalTok{))}
+
+
+\NormalTok{Lik\_biased }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(a) \{}
+\NormalTok{  likelihood }\OtherTok{\textless{}{-}} \FunctionTok{prod}\NormalTok{(}\FunctionTok{dnorm}\NormalTok{(Age, }\AttributeTok{mean =}\NormalTok{ a, }\AttributeTok{sd =}\NormalTok{ bias\_sd))}\CommentTok{\#sd(N)}
+  \FunctionTok{return}\NormalTok{(likelihood)}
+\NormalTok{\}}
+
+
+\NormalTok{Lik\_unbiased }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(a) \{}
+\NormalTok{  likelihood }\OtherTok{\textless{}{-}} \FunctionTok{prod}\NormalTok{(}\FunctionTok{dnorm}\NormalTok{(Age, }\AttributeTok{mean =}\NormalTok{ a, }\AttributeTok{sd =}\NormalTok{ unbias\_sd))}\CommentTok{\#sd(N{-}1)}
+  \FunctionTok{return}\NormalTok{(likelihood)}
+\NormalTok{\}}
+
+
+\NormalTok{a\_range }\OtherTok{\textless{}{-}} \FunctionTok{seq}\NormalTok{(}\AttributeTok{from =}\NormalTok{ m }\SpecialCharTok{{-}} \DecValTok{2}\NormalTok{, }\AttributeTok{to =}\NormalTok{ m }\SpecialCharTok{+} \DecValTok{2}\NormalTok{, }\AttributeTok{by =} \FloatTok{0.01}\NormalTok{)}
+\NormalTok{likelihood\_values }\OtherTok{\textless{}{-}} \FunctionTok{sapply}\NormalTok{(a\_range, Lik\_unbiased)}
+
+
+\FunctionTok{ggplot}\NormalTok{(}\FunctionTok{data.frame}\NormalTok{(}\AttributeTok{a =}\NormalTok{ a\_range, }\AttributeTok{likelihood =}\NormalTok{ likelihood\_values), }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ a, }\AttributeTok{y =}\NormalTok{ likelihood)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_line}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{ggtitle}\NormalTok{(}\StringTok{"Likelihood estimate of the population mean age unbiased"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{"Estimate of the population mean age (a)"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{ylab}\NormalTok{(}\StringTok{"Log Likelihood"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{HW-04_files/figure-latex/unnamed-chunk-5-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+
+
+\NormalTok{a\_range }\OtherTok{\textless{}{-}} \FunctionTok{seq}\NormalTok{(}\AttributeTok{from =}\NormalTok{ m }\SpecialCharTok{{-}} \DecValTok{2}\NormalTok{, }\AttributeTok{to =}\NormalTok{ m }\SpecialCharTok{+} \DecValTok{2}\NormalTok{, }\AttributeTok{by =} \FloatTok{0.01}\NormalTok{)}
+\NormalTok{likelihood\_values }\OtherTok{\textless{}{-}} \FunctionTok{sapply}\NormalTok{(a\_range, Lik\_biased)}
+
+
+\FunctionTok{ggplot}\NormalTok{(}\FunctionTok{data.frame}\NormalTok{(}\AttributeTok{a =}\NormalTok{ a\_range, }\AttributeTok{likelihood =}\NormalTok{ likelihood\_values), }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ a, }\AttributeTok{y =}\NormalTok{ likelihood)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_line}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{ggtitle}\NormalTok{(}\StringTok{"Likelihood estimate of the population mean age biased"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{"Estimate of the population mean age (a)"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{ylab}\NormalTok{(}\StringTok{"Log Likelihood"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{HW-04_files/figure-latex/unnamed-chunk-5-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+
+\FunctionTok{cat}\NormalTok{(}\StringTok{"Biased Estimate:"}\NormalTok{, bias\_sd, }\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\DocumentationTok{\#\# Biased Estimate: 7.358418}
+\FunctionTok{cat}\NormalTok{(}\StringTok{"Unbiased Estimate:"}\NormalTok{, unbias\_sd, }\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\DocumentationTok{\#\# Unbiased Estimate: 7.418488}
+
+\CommentTok{\#Unbiased estimate is larger than biased estimate}
+
+\CommentTok{\#Unbiased estimate is more likely as it represents real data more accurately when compared to biased estimator}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{5}
+\tightlist
+\item
+  Let \texttt{X} be a continuous random variable with the
+  piecewise-defined probability density function \(f(x)\) equal to 0.75,
+  \(0≤x≤1\), 0.25, \(2≤x≤3\), 0 elsewhere. Plot the density \(f(x)\).
+  \textbf{(1 point)}
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+
+\FunctionTok{library}\NormalTok{(ggplot2)}
+
+\NormalTok{density\_function }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(x) \{}
+  \ControlFlowTok{if}\NormalTok{ (x }\SpecialCharTok{\textgreater{}=} \DecValTok{0} \SpecialCharTok{\&}\NormalTok{ x }\SpecialCharTok{\textless{}=} \DecValTok{1}\NormalTok{) \{}
+    \FunctionTok{return}\NormalTok{ (}\FloatTok{0.75}\NormalTok{)}
+\NormalTok{  \} }\ControlFlowTok{else} \ControlFlowTok{if}\NormalTok{ (x }\SpecialCharTok{\textgreater{}} \DecValTok{1} \SpecialCharTok{\&}\NormalTok{ x }\SpecialCharTok{\textless{}=} \DecValTok{2}\NormalTok{) \{}
+    \FunctionTok{return}\NormalTok{ (}\DecValTok{0}\NormalTok{)}
+\NormalTok{  \} }\ControlFlowTok{else} \ControlFlowTok{if}\NormalTok{ (x }\SpecialCharTok{\textgreater{}} \DecValTok{2} \SpecialCharTok{\&}\NormalTok{ x }\SpecialCharTok{\textless{}=} \DecValTok{3}\NormalTok{) \{}
+    \FunctionTok{return}\NormalTok{ (}\FloatTok{0.25}\NormalTok{)}
+\NormalTok{  \} }\ControlFlowTok{else}\NormalTok{ \{}
+    \FunctionTok{return}\NormalTok{ (}\DecValTok{0}\NormalTok{)}
+\NormalTok{  \}}
+\NormalTok{\}}
+
+\NormalTok{x\_values }\OtherTok{\textless{}{-}} \FunctionTok{seq}\NormalTok{(}\AttributeTok{from =} \DecValTok{0}\NormalTok{, }\AttributeTok{to =} \DecValTok{3}\NormalTok{, }\AttributeTok{by =} \FloatTok{0.01}\NormalTok{)}
+\NormalTok{density\_values }\OtherTok{\textless{}{-}} \FunctionTok{sapply}\NormalTok{(x\_values, density\_function)}
+\FunctionTok{plot}\NormalTok{(x\_values, density\_values, }\AttributeTok{type =} \StringTok{"l"}\NormalTok{, }\AttributeTok{xlab =} \StringTok{"x"}\NormalTok{, }\AttributeTok{ylab =} \StringTok{"Density"}\NormalTok{, }\AttributeTok{main =} \StringTok{"Density Function"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{HW-04_files/figure-latex/unnamed-chunk-6-1.pdf}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{6}
+\tightlist
+\item
+  Plot the cumulative density \(F(x)\). \textbf{(1 point)}
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+
+\NormalTok{cumulative\_density\_function }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(x) \{}
+  \ControlFlowTok{if}\NormalTok{ (x }\SpecialCharTok{\textgreater{}=} \DecValTok{0} \SpecialCharTok{\&}\NormalTok{ x }\SpecialCharTok{\textless{}=} \DecValTok{1}\NormalTok{) \{}
+    \FunctionTok{return}\NormalTok{ (}\FloatTok{0.75} \SpecialCharTok{*}\NormalTok{ x)}
+\NormalTok{  \} }\ControlFlowTok{else} \ControlFlowTok{if}\NormalTok{ (x }\SpecialCharTok{\textgreater{}} \DecValTok{1} \SpecialCharTok{\&}\NormalTok{ x }\SpecialCharTok{\textless{}=} \DecValTok{2}\NormalTok{) \{}
+    \FunctionTok{return}\NormalTok{ (}\FloatTok{0.75}\NormalTok{)}
+\NormalTok{  \} }\ControlFlowTok{else} \ControlFlowTok{if}\NormalTok{ (x }\SpecialCharTok{\textgreater{}} \DecValTok{2} \SpecialCharTok{\&}\NormalTok{ x }\SpecialCharTok{\textless{}=} \DecValTok{3}\NormalTok{) \{}
+    \FunctionTok{return}\NormalTok{ (}\FloatTok{0.75} \SpecialCharTok{+} \FloatTok{0.25} \SpecialCharTok{*}\NormalTok{ (x }\SpecialCharTok{{-}} \DecValTok{2}\NormalTok{))}
+\NormalTok{  \} }\ControlFlowTok{else}\NormalTok{ \{}
+    \FunctionTok{return}\NormalTok{ (}\DecValTok{1}\NormalTok{)}
+\NormalTok{  \}}
+\NormalTok{\}}
+
+\NormalTok{x\_values }\OtherTok{\textless{}{-}} \FunctionTok{seq}\NormalTok{(}\AttributeTok{from =} \DecValTok{0}\NormalTok{, }\AttributeTok{to =} \DecValTok{3}\NormalTok{, }\AttributeTok{by =} \FloatTok{0.01}\NormalTok{)}
+\NormalTok{cumulative\_density\_values }\OtherTok{\textless{}{-}} \FunctionTok{sapply}\NormalTok{(x\_values, cumulative\_density\_function)}
+\FunctionTok{plot}\NormalTok{(x\_values, cumulative\_density\_values, }\AttributeTok{type =} \StringTok{"l"}\NormalTok{, }\AttributeTok{xlab =} \StringTok{"x"}\NormalTok{, }\AttributeTok{ylab =} \StringTok{"Cumulative Density"}\NormalTok{, }\AttributeTok{main =} \StringTok{"Cumulative Density Function"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{HW-04_files/figure-latex/unnamed-chunk-7-1.pdf}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{7}
+\tightlist
+\item
+  Using the sample redcap dataset available at
+  {[}\url{https://jlucasmckay.bmi.emory.edu/global/bmi510/gait.csv}{]},
+  identify the unique patients and summarize the ratio of women to men.
+  Also report how many missing values there are. (The sex variable codes
+  0 for male, 1 for female.) \textbf{(1/2 point)} Then, calculate (and
+  plot) the (Pearson's) correlation between gait speed and cadence.
+  \textbf{(1/2 point)}
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+
+\FunctionTok{library}\NormalTok{(dplyr)}
+\FunctionTok{library}\NormalTok{(ggcorrplot)}
+\FunctionTok{library}\NormalTok{(corrplot)}
+\FunctionTok{library}\NormalTok{(ggcorrplot)}
+
+
+
+\NormalTok{redcap }\OtherTok{\textless{}{-}} \FunctionTok{read.csv}\NormalTok{(}\StringTok{"https://jlucasmckay.bmi.emory.edu/global/bmi510/gait.csv"}\NormalTok{)}
+\NormalTok{unique\_patients }\OtherTok{\textless{}{-}} \FunctionTok{unique}\NormalTok{(redcap}\SpecialCharTok{$}\NormalTok{record\_id)}
+
+\FunctionTok{cat}\NormalTok{(}\StringTok{"No of Unique patients are : "}\NormalTok{,}\FunctionTok{length}\NormalTok{(unique\_patients))}
+\DocumentationTok{\#\# No of Unique patients are :  935}
+
+\CommentTok{\#we need to filter out the rows where the reocrd\_id reappears before calculating the ratio of men to women}
+\NormalTok{redcap\_unique }\OtherTok{\textless{}{-}}\NormalTok{ redcap }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(}\SpecialCharTok{!}\FunctionTok{duplicated}\NormalTok{(record\_id))}
+
+\NormalTok{m }\OtherTok{\textless{}{-}}\NormalTok{ redcap\_unique}\SpecialCharTok{$}\NormalTok{sex }\SpecialCharTok{==} \DecValTok{0}
+\NormalTok{f }\OtherTok{\textless{}{-}}\NormalTok{ redcap\_unique}\SpecialCharTok{$}\NormalTok{sex }\SpecialCharTok{==} \DecValTok{1}
+
+\NormalTok{men }\OtherTok{\textless{}{-}} \FunctionTok{length}\NormalTok{(m[m }\SpecialCharTok{==} \ConstantTok{TRUE}\NormalTok{])}
+\NormalTok{women }\OtherTok{\textless{}{-}} \FunctionTok{length}\NormalTok{(f[f }\SpecialCharTok{==} \ConstantTok{TRUE}\NormalTok{])}
+
+\NormalTok{ratio\_of\_men\_women }\OtherTok{\textless{}{-}}\NormalTok{ men}\SpecialCharTok{/}\NormalTok{women}
+
+\FunctionTok{cat}\NormalTok{(}\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{Ratio of men to women :"}\NormalTok{,ratio\_of\_men\_women)}
+\DocumentationTok{\#\# }
+\DocumentationTok{\#\# Ratio of men to women : 1.301811}
+
+\NormalTok{missing\_vals }\OtherTok{\textless{}{-}} \FunctionTok{is.na}\NormalTok{(redcap\_unique}\SpecialCharTok{$}\NormalTok{sex)}
+\NormalTok{missing\_values }\OtherTok{\textless{}{-}} \FunctionTok{length}\NormalTok{(missing\_vals[missing\_vals }\SpecialCharTok{==} \ConstantTok{TRUE}\NormalTok{])}
+
+\FunctionTok{cat}\NormalTok{(}\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{The sex column has "}\NormalTok{,missing\_values,}\StringTok{" missing values}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\DocumentationTok{\#\# }
+\DocumentationTok{\#\# The sex column has  209  missing values}
+
+\NormalTok{redcap\_without\_na }\OtherTok{\textless{}{-}}\NormalTok{ redcap }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(}\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(speed) }\SpecialCharTok{\&} \SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(cadence))}
+
+\NormalTok{df\_x }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(redcap\_without\_na}\SpecialCharTok{$}\NormalTok{speed)}
+
+\NormalTok{df\_y }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(redcap\_without\_na}\SpecialCharTok{$}\NormalTok{cadence)}
+
+
+\NormalTok{correlation }\OtherTok{\textless{}{-}} \FunctionTok{cor}\NormalTok{(df\_x, df\_y)}
+\NormalTok{correlation\_matrix }\OtherTok{\textless{}{-}} \FunctionTok{cor}\NormalTok{(}\FunctionTok{cbind}\NormalTok{(df\_x, df\_y))}
+
+\FunctionTok{ggcorrplot}\NormalTok{(correlation\_matrix, }\AttributeTok{method =} \StringTok{"circle"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{HW-04_files/figure-latex/unnamed-chunk-8-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+
+\CommentTok{\#df\_x \textless{}{-} data.frame(x\_l \textless{}{-} redcap\_without\_na$speed, lab \textless{}{-} rep("gait speed", nrow(df\_x)))}
+
+\CommentTok{\#df\_y \textless{}{-} data.frame(x\_l \textless{}{-} redcap\_without\_na$cadence, lab \textless{}{-} rep("cadence", nrow(df\_y)))}
+\CommentTok{\#colnames(df\_x) \textless{}{-} c("x\_l", "lab")}
+\CommentTok{\#colnames(df\_y) \textless{}{-} c("x\_l", "lab")}
+
+\CommentTok{\#redcap\_without\_na\_combined \textless{}{-} bind\_rows(df\_x,df\_y)}
+
+
+\FunctionTok{ggplot}\NormalTok{(redcap\_without\_na, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ speed, }\AttributeTok{y =}\NormalTok{ cadence)) }\SpecialCharTok{+}
+\FunctionTok{geom\_point}\NormalTok{() }\SpecialCharTok{+}
+\FunctionTok{geom\_smooth}\NormalTok{(}\AttributeTok{method=}\StringTok{"lm"}\NormalTok{, }\AttributeTok{se=}\ConstantTok{FALSE}\NormalTok{)}\SpecialCharTok{+}
+\FunctionTok{ggtitle}\NormalTok{(}\FunctionTok{paste}\NormalTok{(}\StringTok{"Pearson\textquotesingle{}s correlation coefficient: "}\NormalTok{, }\FunctionTok{round}\NormalTok{(correlation, }\DecValTok{2}\NormalTok{))) }\SpecialCharTok{+}
+\FunctionTok{xlab}\NormalTok{(}\StringTok{"Gait speed"}\NormalTok{) }\SpecialCharTok{+}
+\FunctionTok{ylab}\NormalTok{(}\StringTok{"Cadence"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{HW-04_files/figure-latex/unnamed-chunk-8-2.pdf}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{8}
+\tightlist
+\item
+  We have not discussed (at least at length) joint frequency functions /
+  probability mass functions, but they are a generalization of
+  probability mass functions for a single random variable. Say the joint
+  frequency function of two discrete random variables, X and Y, is as
+  follows:
+\end{enumerate}
+
+\begin{longtable}[]{@{}lllll@{}}
+\toprule()
+X & Y=1 & Y=2 & Y=3 & Y=4 \\
+\midrule()
+\endhead
+1 & 0.10 & 0.05 & 0.02 & 0.02 \\
+2 & 0.05 & 0.20 & 0.05 & 0.02 \\
+3 & 0.02 & 0.05 & 0.20 & 0.04 \\
+4 & 0.02 & 0.02 & 0.04 & 0.10 \\
+\bottomrule()
+\end{longtable}
+
+These data are available at
+{[}\url{https://jlucasmckay.bmi.emory.edu/global/bmi510/joint_frequency.csv}{]}
+Columns 2 through 4 are named Y1, Y2, Y3, and Y4. Completely melt the
+data \textbf{(1/2 point)} and extract numerical values from the codes
+\texttt{Y1}, \texttt{Y2}, etc. \textbf{(1/2 point)}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+
+\FunctionTok{library}\NormalTok{(tidyr)}
+\FunctionTok{library}\NormalTok{(reshape2)}
+
+
+\NormalTok{data }\OtherTok{\textless{}{-}} \FunctionTok{read.csv}\NormalTok{(}\StringTok{"https://jlucasmckay.bmi.emory.edu/global/bmi510/joint\_frequency.csv"}\NormalTok{)}
+\NormalTok{melted\_data }\OtherTok{\textless{}{-}} \FunctionTok{melt}\NormalTok{(data, }\AttributeTok{id.vars=}\StringTok{"X"}\NormalTok{)}
+
+\FunctionTok{print}\NormalTok{(melted\_data}\SpecialCharTok{$}\NormalTok{value)}
+\DocumentationTok{\#\#  [1] 0.10 0.05 0.02 0.02 0.05 0.20 0.05 0.02 0.02 0.05 0.20 0.04 0.02 0.02 0.04}
+\DocumentationTok{\#\# [16] 0.10}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{9}
+\tightlist
+\item
+  Find and plot the marginal frequency functions of X and Y. In the
+  two-by-two table above, these would be the row and column sums. (The
+  margins.) To what do the frequencies sum? \textbf{(1 point)}
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+
+
+\NormalTok{marginal\_frequency\_X }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\FloatTok{0.10} \SpecialCharTok{+} \FloatTok{0.05} \SpecialCharTok{+} \FloatTok{0.02} \SpecialCharTok{+} \FloatTok{0.02}\NormalTok{,}
+                          \FloatTok{0.05} \SpecialCharTok{+} \FloatTok{0.20} \SpecialCharTok{+} \FloatTok{0.05} \SpecialCharTok{+} \FloatTok{0.02}\NormalTok{,}
+                          \FloatTok{0.02} \SpecialCharTok{+} \FloatTok{0.05} \SpecialCharTok{+} \FloatTok{0.20} \SpecialCharTok{+} \FloatTok{0.04}\NormalTok{,}
+                          \FloatTok{0.02} \SpecialCharTok{+} \FloatTok{0.02} \SpecialCharTok{+} \FloatTok{0.04} \SpecialCharTok{+} \FloatTok{0.10}\NormalTok{)}
+
+\NormalTok{marginal\_frequency\_Y }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\FloatTok{0.10} \SpecialCharTok{+} \FloatTok{0.05} \SpecialCharTok{+} \FloatTok{0.02} \SpecialCharTok{+} \FloatTok{0.02}\NormalTok{,}
+                          \FloatTok{0.05} \SpecialCharTok{+} \FloatTok{0.20} \SpecialCharTok{+} \FloatTok{0.05} \SpecialCharTok{+} \FloatTok{0.02}\NormalTok{,}
+                          \FloatTok{0.02} \SpecialCharTok{+} \FloatTok{0.05} \SpecialCharTok{+} \FloatTok{0.20} \SpecialCharTok{+} \FloatTok{0.04}\NormalTok{,}
+                          \FloatTok{0.02} \SpecialCharTok{+} \FloatTok{0.02} \SpecialCharTok{+} \FloatTok{0.04} \SpecialCharTok{+} \FloatTok{0.10}\NormalTok{)}
+
+\FunctionTok{cat}\NormalTok{(}\StringTok{"Marg freq x:"}\NormalTok{, marginal\_frequency\_X, }\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{Marg freq y"}\NormalTok{,marginal\_frequency\_Y)}
+\DocumentationTok{\#\# Marg freq x: 0.19 0.32 0.31 0.18 }
+\DocumentationTok{\#\# Marg freq y 0.19 0.32 0.31 0.18}
+
+\FunctionTok{barplot}\NormalTok{(marginal\_frequency\_X, }\AttributeTok{names.arg=}\FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{,}\DecValTok{3}\NormalTok{,}\DecValTok{4}\NormalTok{), }\AttributeTok{xlab=}\StringTok{"X"}\NormalTok{, }\AttributeTok{ylab=}\StringTok{"Frequency"}\NormalTok{, }\AttributeTok{main =} \StringTok{"marginal freq x"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{HW-04_files/figure-latex/unnamed-chunk-10-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{barplot}\NormalTok{(marginal\_frequency\_Y, }\AttributeTok{names.arg=}\FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{,}\DecValTok{3}\NormalTok{,}\DecValTok{4}\NormalTok{), }\AttributeTok{xlab=}\StringTok{"Y"}\NormalTok{, }\AttributeTok{ylab=}\StringTok{"Frequency"}\NormalTok{, }\AttributeTok{main =} \StringTok{"marginal freq y"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{HW-04_files/figure-latex/unnamed-chunk-10-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+
+\CommentTok{\#The frequencies represent the distribution of the discrete random variables X and Y. The sum of the marginal frequencies represent the total count of occurrences of X and Y. }
+\end{Highlighting}
+\end{Shaded}
+
+
+\end{document}

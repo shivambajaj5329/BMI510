@@ -1,0 +1,99 @@
+---
+title: "homework 7-redo- Shivam Bajaj"
+output: html_document
+date: "2023-04-10"
+---
+
+```{r}
+bonferroni_holm_wrapper <- function(p_values, alpha) {
+  adjusted_p_values <- p.adjust(p_values, method = "holm")
+  return(adjusted_p_values <= alpha)
+}
+
+fdr_wrapper <- function(p_values, alpha) {
+  adjusted_p_values <- p.adjust(p_values, method = "fdr")
+  return(adjusted_p_values <= alpha)
+}
+
+bonferroni_holm_manual <- function(p_values, alpha) {
+  n <- length(p_values)
+  sorted_indices <- order(p_values)
+  sorted_p_values <- p_values[sorted_indices]
+  
+  m <- n
+  adjusted_p_values <- rep(1, n)
+  
+  for (i in seq_along(sorted_p_values)) {
+    current_alpha <- alpha / (m - i + 1)
+    if (sorted_p_values[i] <= current_alpha) {
+      adjusted_p_values[sorted_indices[1:i]] <- sorted_p_values[i]
+    } else {
+      break
+    }
+  }
+  
+  return(adjusted_p_values <= alpha)
+}
+
+fdr_manual <- function(p_values, alpha) {
+  n <- length(p_values)
+  sorted_indices <- order(p_values)
+  sorted_p_values <- p_values[sorted_indices]
+  
+  fdr_values <- n * sorted_p_values / seq_along(sorted_p_values)
+  adjusted_p_values <- replace(rep(1, n), sorted_indices, fdr_values)
+  return(adjusted_p_values <= alpha)
+}
+
+test_p_values <- c(0.0025, 0.0050, 0.0075, 0.0100, 0.0125, 0.0150, 0.0175, 0.0200, 0.0225, 0.0250)
+
+bh_wrapper_result <- bonferroni_holm_wrapper(test_p_values, 0.05)
+fdr_wrapper_result <- fdr_wrapper(test_p_values, 0.05)
+
+bh_manual_result <- bonferroni_holm_manual(test_p_values, 0.05)
+fdr_manual_result <- fdr_manual(test_p_values, 0.05)
+
+all.equal(bh_wrapper_result, bh_manual_result)
+all.equal(fdr_wrapper_result, fdr_manual_result)
+
+```
+
+```{r}
+library(tidyverse)
+
+csf_data <- read.csv("https://jlucasmckay.bmi.emory.edu/global/bmi510/csf.csv")
+csf_data <- csf_data[!is.na(csf_data$Ab42), ]
+
+ab42_anova <- aov(Ab42 ~ Group, data = csf_data)
+anova_summary <- summary(ab42_anova)
+print(anova_summary)
+
+
+group_means <- csf_data %>% group_by(Group) %>% summarise(group_mean = mean(Ab42), n = n())
+overall_mean <- mean(csf_data$Ab42)
+
+SSGROUP <- sum(group_means$n * (group_means$group_mean - overall_mean)^2)
+SSTOT <- sum((csf_data$Ab42 - overall_mean)^2)
+SSERROR <- SSTOT - SSGROUP
+
+df_GROUP <- nrow(group_means) - 1
+df_ERROR <- nrow(csf_data) - nrow(group_means)
+
+MSGROUP <- SSGROUP / df_GROUP
+MSERROR <- SSERROR / df_ERROR
+
+F_statistic <- MSGROUP / MSERROR
+
+p_value <- pf(F_statistic, df_GROUP, df_ERROR, lower.tail = FALSE)
+
+cat("SSGROUP:", SSGROUP, "\n")
+cat("SSTOT:", SSTOT, "\n")
+cat("SSERROR:", SSERROR, "\n")
+cat("MSGROUP:", MSGROUP, "\n")
+cat("MSERROR:", MSERROR, "\n")
+cat("F-statistic:", F_statistic, "\n")
+cat("p-value Calculated:", p_value, "\n")
+cat("ANOVA p-value:", anova_summary[[1]]["Group", "Pr(>F)"], "\n")
+
+
+```

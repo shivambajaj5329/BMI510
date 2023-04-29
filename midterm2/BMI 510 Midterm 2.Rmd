@@ -1,0 +1,58 @@
+---
+title: "Midterm 2"
+author: "J. Lucas McKay"
+date: "April 3, 2023"
+output: html_document
+---
+
+<style>div.soln { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = T, message = F, warning = F, collapse = T)
+library(tidyverse)
+```
+
+***
+**1. Linear Regression**
+
+It has been suggested that the distribution of body mass index (BMI) in the population follows a beta distribution.
+There are some BMI data on [the website](https://jlucasmckay.bmi.emory.edu/global/bmi510/bmi.csv). (Note that the BMI here is in normalized units, not the numbers around 20 that we see in practice.)
+
+* Plot `bp` vs. `bmi`. **(1 point)**
+* Fit a straight line (a trendline) to the plot with `geom_smooth()`. **(1 point)**
+* Use `lm` to regress `bp` onto `bmi`. Call the fitted model `m1`. What is the p-value for the `bmi` coefficient? **(1 point)**
+* Add the predicted values `bp_hat` from `m1` to the `bmi_data` dataset. **(1 point)**
+* Recreate the plot of of `bp` vs. `bmi`, and add the `bp_hat` values to the plot. Do they fall on the trendline? **(1 point)**
+* Use `confint` to identify 95% confidence intervals for $\beta_{bp}$, the model coefficient for `bp`. **(1 point)**
+* Identify the standard errors of the model coefficients **(1/2 point)** and use them to manually calculate a 95% confidence interval for $\beta_{bp}$. Compare your results to those of the built-in function. **(1/2 point)**
+
+***
+**2. Correlation Coefficients**
+
+* Calculate the correlation coefficient $r$ between `bp` and `bmi`. **(1/2 point)** Is it negligible, small, medium, or large, according to the effect sizes listed [here](https://jlucasmckay.bmi.emory.edu/global/power/power.html)? **(1/2 point)**
+* Use `cor.test` to calculate a 95% confidence interval for the correlation coefficient $r$. **(1/2 point)** Is it possible that the true underlying relationship could correspond to a small effect according to the same effect sizes? **(1/2 point)**
+* Plot `bp` vs. `bmi` after randomly re-arranging ("shuffling) the order of `bmi`. Fit a straight line as before. Is the slope more or less steep than before? **(1 point)**
+* Use `replicate` to calculate the correlation coefficient between `bp` and `bmi` after randomly re-arranging the order of `bmi` 10,000 times. This is a simple permutation test, and simulates the relationship between the two variables under the null hypothesis that there is no correlation at all. **(1 point)**
+* Out of the 10,000 random shuffles, how many correlation coefficients are smaller in magnitude than `r`? This is a non-parametric approximation to a p-value. **(1 point)**
+
+***
+**3. Maximum Likelihood**
+
+Now let's examine the `bmi` variable itself. There are two parameters, `shape1` and `shape2` that determine the beta density.
+
+* Create a function `likelihood(shape1,shape2,x)` that calculates the log likelihood of bmi data `x` under the beta density with parameters `shape1` and `shape2`. **(1 point)**
+* Perform a grid search to identify the maximum likelihood estimators of `shape1` and `shape2`. Sweep each parameter value from 0.1 to 10, with 100 total steps. **(1 point)**
+* Plot the log likelihood as a function of `shape1` with `ggplot2` and `geom_point`. Map `shape2` to point color. Make each point partially transparent (`alpha`=0.2). **(1 point)**
+
+
+***
+**4. Manipulating distribution functions**
+
+The `bmi` variable is in standardized units that can be used in built-in R functions. Assuming that the population from which this sample is drawn are well-represented by a beta density parameterized by your maximum likelihood estimators of `shape1` and `shape2`:
+
+* What proportion of the sample has `bmi` between 0.2 and 0.4? **(1 point)**
+* What proportion of the population has `bmi` between 0.2 and 0.4? **(1 point)**
+* What cut-off values of `bmi` could be used to identify people in the middle 50% of the sample? **(1 point)**
+* What cut-off values of `bmi` could be used to identify people in the middle 50% of the population? **(1 point)**
+* What is the numerical value of the beta density for a person with `bmi` at the center (50th percentile) of the beta density? Is it greater than or less than 1? **(1 point)**
+

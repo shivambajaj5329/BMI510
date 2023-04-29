@@ -1,0 +1,126 @@
+---
+title: "Homework 6"
+author: "Shivam Bajaj"
+date: "2023-03-06"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+
+```{r}
+
+
+
+get_sample_size <- function(d, power) {
+  as.integer(power.t.test(delta = d,power = power)$n)
+}
+
+get_sample_size(d = 0.5, power = 0.8)
+```
+
+```{r}
+
+library(ggplot2)
+
+# create a data frame with effect sizes and corresponding sample sizes
+power_levels <- c(0.8, 0.9, 0.95)
+effect_size <- seq(0.2, 2, by = 0.01)
+df <- expand.grid(d = effect_size, power = power_levels)
+df$n <- mapply(get_sample_size, df$d, df$power)
+
+# plot with linear y-axis scale
+ggplot(df, aes(x = d, y = n, color = factor(power))) +
+  geom_line() +
+  labs(x = "Effect size (Cohen's d)", y = "Minimum sample size", color = "Power") +
+  scale_color_discrete(labels = c("0.8", "0.9", "0.95")) +
+  theme_classic()
+
+# plot with logarithmic y-axis scale
+ggplot(df, aes(x = d, y = n, color = factor(power))) +
+  geom_line() +
+  labs(x = "Effect size (Cohen's d)", y = "Minimum sample size", color = "Power") +
+  scale_color_discrete(labels = c("0.8", "0.9", "0.95")) +
+  scale_y_log10() +
+  theme_classic()
+
+#The logarithmic plot has a "staircase" shape for high values of Cohen's d because the sample size needed to achieve a given power level increases dramatically as effect size increases. As a result, the minimum sample size often needs to be rounded up to the nearest integer, leading to a step-like pattern in the plot.
+
+
+```
+
+```{r}
+
+m <- 35 # number of successes (promoted employees)
+n <- 13 # number of failures (not promoted employees)
+k <- 24 # number of resumes in the left column (males)
+
+dhyper(21, m, n, k)
+
+
+#To perform Fisher's exact test, we need to calculate the probabilities of all possible outcomes that have the same or lower probability than the observed outcome (i.e., the probability of getting 21 or fewer promotions in the top left cell and 14 or fewer promotions in the top right cell). Since there are four cells in the table, we would need to test all four cells in total.
+
+# Create the contingency table
+count_data <- matrix(c(21, 14, 3, 10), nrow = 2, ncol = 2, byrow = TRUE,
+                     dimnames = list(c("Male", "Female"), c("Promote", "Hold")))
+
+
+count_data
+
+#default conf level is 0.05
+chisq.test(count_data)
+
+
+#The resulting p-value is approximately 0.051, which is above the significance level of 0.05. Therefore, we fail to reject the null hypothesis that promotions are distributed equally between males and females.
+```
+
+
+```{r}
+
+waldci <- function(p_hat, n, alpha) {
+  z_star <- qnorm(1 - alpha / 2)
+  margin_of_error <- z_star * sqrt(p_hat * (1 - p_hat) / n)
+  lower_bound <- p_hat - margin_of_error
+  upper_bound <- p_hat + margin_of_error
+  return(c(lower_bound, upper_bound))
+}
+
+coverageProb <- function(p, n_trials, n_replicates, alpha) {
+  coverage <- numeric(length(p))
+  for (i in seq_along(p)) {
+    for (j in seq_len(n_replicates)) {
+      successes <- rbinom(1, n_trials, p[i])
+      ci <- waldci(successes / n_trials, n_trials, alpha)
+      if (p[i] >= ci[1] && p[i] <= ci[2]) {
+        coverage[i] <- coverage[i] + 1
+      }
+    }
+  }
+  coverage <- coverage / n_replicates
+  return(coverage)
+}
+
+
+library(ggplot2)
+
+p <- seq(0.001, 0.999, by = 0.001)
+n_trials <- c(12, 50, 1000)
+n_replicates <- 1000
+alpha <- 0.05
+
+results <- data.frame()
+for (i in seq_along(n_trials)) {
+  coverage <- coverageProb(p, n_trials[i], n_replicates, alpha)
+  results <- rbind(results, data.frame(p, coverage, n_trials = n_trials[i]))
+}
+
+ggplot(results, aes(x = p, y = coverage, color = factor(n_trials))) +
+  geom_line(size = 1) +
+  geom_hline(yintercept = 0.95, linetype = "dashed") +
+  scale_color_discrete(name = "n_trials") +
+  xlab("True underlying probability") +
+  ylab("Coverage probability") +
+  ggtitle("Wald confidence interval coverage") +
+  theme_minimal()
+
+```

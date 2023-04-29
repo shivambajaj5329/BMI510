@@ -1,0 +1,129 @@
+---
+title: "Homework 10"
+author: "Shivam Bajaj"
+date: "2023-04-15"
+output: html_document
+---
+Question 1
+```{r}
+library(reshape2)
+library(ggplot2)
+library(tidyverse)
+data <- read.csv("https://jlucasmckay.bmi.emory.edu/global/bmi510/legs.csv")
+
+#plot height vs. left leg length
+ggplot(data, aes(x = leg_left, y = height)) +
+  geom_point() +
+  theme_minimal() +
+  labs(title = "Height vs Left Leg Length",
+       x = "Left Leg Length (cm)",
+       y = "Height (cm)")
+
+#plot right leg length vs. left leg length
+ggplot(data, aes(x = leg_left, y = leg_right)) +
+  geom_point() +
+  theme_minimal() +
+  labs(title = "Height vs Left Leg Length",
+       x = "Left Leg Length (cm)",
+       y = "Right Leg Length (cm)")
+
+#plot correlation between left and right leg lengths
+cor_matrix <- cor(data[, c("leg_left", "leg_right","height")])
+melted_cor_matrix <- melt(cor_matrix)
+
+ggplot(melted_cor_matrix, aes(x = Var1, y = Var2, fill = value)) +
+  geom_tile() +
+  scale_fill_gradient2(low = "blue", mid = "white", high = "red", midpoint = 0) +
+  theme_minimal() +
+  labs(title = "Correlation Heatmap")
+
+cat("\nData indicates Strong positive correlation betweeen left leg lengths and right leg lengths , more precisely by a coefficient of",cor(data$leg_left, data$leg_right))
+
+#def func ols beta
+
+ols_beta <- function(y, X) {
+  y_mat <- as.matrix(y)
+  X_mat <- as.matrix(X)
+
+  XtX_inv <- solve(t(X_mat) %*% X_mat)
+  beta <- XtX_inv %*% t(X_mat) %*% y_mat
+  return(beta)
+}
+
+y <- data$height
+X <- cbind(1, data$leg_left)
+beta <- ols_beta(y, X)
+cat("\nols beta for left leg",beta)
+
+XLR <- cbind(1, data$leg_left, data$leg_right)
+beta_LR <- ols_beta(y, XLR)
+cat("\nols beta for left and right leg",beta_LR)
+
+cat("\nThe OLS Beta values for Left Leg is not the same. This difference in the estimated coefficients is due to the influence of the right leg length in the second model, which affects the interpretation of the left leg length's impact on height.This makes sense, because the previous heat map clearly states a strong positive correlation between left leg length and right leg length, and hence with the inclusion of the right leg variables, there definitely is going to be some change in beta values in the left leg ols calculations")
+
+```
+Question 2
+```{r}
+
+data$leg_left_2 <- data$leg_left
+model <- lm(height ~ leg_left + leg_left_2, data = data)
+summary(model)
+coef(model)
+
+cat("As both the columns are collinear, R automatically identified this and did not provide any coefficeints for leg_left_2, the summary and coef functions clearly say NA for leg_left_2 indicating R automatically identifies collinear columns ")
+
+#X <- cbind(1, data$leg_left, data$leg_left_2)
+#beta_coll <- ols_beta(y, X)
+
+#cat(beta_coll)
+
+cat("attempting to find the ols beta values throws an error as the matrix Xtrans*X will be a singular value and does not have an inverse. The error indicates that the solve function failed while trying to compute.")
+
+```
+
+Question 3
+```{r}
+rss <- function(y, X, beta) {
+  
+  residuals <- y - X %*% beta
+  return(sum(residuals^2))
+}
+
+l1 <- function(beta) {
+  return(sum(abs(beta)))
+}
+
+beta_0 <- beta_LR[1]
+#using beta ols value of the right leg gives the correct graph 
+#beta_leg_left <- beta_LR[2]  
+beta_leg_left <- beta_LR[3]  
+beta_leg_right_seq <- seq(0, 1, by = 0.01)
+
+tibble_data <- tibble(
+  beta_0 = rep(beta_0, length(beta_leg_right_seq)),
+  beta_leg_left = rep(beta_leg_left, length(beta_leg_right_seq)),
+  beta_leg_right = beta_leg_right_seq
+)
+
+library(ggplot2)
+
+lambdas <- seq(0, 5000, by = 1000)
+
+plot_data <- tibble_data %>%
+  crossing(lambda = lambdas) %>%
+  mutate(
+    personalized_error = pmap_dbl(list(beta_0, beta_leg_left, beta_leg_right, lambda), function(beta_0_val, beta_leg_left_val, beta_leg_right_val, lambda_val) {
+      beta_val <- c(beta_0_val, beta_leg_left_val, beta_leg_right_val)
+      rss(y, XLR, beta_val) + lambda_val * l1(beta_val)
+    })
+  )
+
+
+ggplot(plot_data, aes(x = beta_leg_right, y = personalized_error, color = factor(lambda))) +
+  geom_point() +
+  scale_y_continuous(limits = c(0, 4e5)) +
+  labs(color = "Lambda") +
+  theme_minimal()
+
+
+```

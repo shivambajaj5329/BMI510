@@ -1,0 +1,160 @@
+---
+title: "Homework11"
+author: "Shivam Bajaj"
+date: "2023-04-23"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+1a
+```{r}
+library(readr)
+url <- "https://jlucasmckay.bmi.emory.edu/global/bmi510/diabetes_progression.csv"
+data <- read_csv(url)
+median_prog <- median(data$progression)
+data$prog_cat <- ifelse(data$progression > median_prog, 1, 0)
+data$progression <- NULL
+```
+1b
+```{r}
+library(stats)
+logit_model <- glm(prog_cat ~ ., data = data, family = binomial(link = "logit"))
+summary(logit_model)
+```
+1c
+```{r}
+univariate_logit <- function(data, dependent_var, independent_var) {
+  formula <- as.formula(paste(dependent_var, "~", independent_var))
+  logit_model <- glm(formula, data = data, family = binomial(link = "logit"))
+  return(summary(logit_model))
+}
+
+independent_var <- "age" # replace with the desired independent variable
+result <- univariate_logit(data, "prog_cat", independent_var)
+print(result)
+```
+
+1d
+```{r}
+independent_vars <- colnames(data)[-which(colnames(data) == "prog_cat")]
+
+result_df <- data.frame()
+
+for (var in independent_vars) {
+  model_summary <- univariate_logit(data, "prog_cat", var)
+  coefficients <- model_summary$coefficients
+  row <- data.frame(
+    Predictor = var,
+    Estimate = coefficients[2, "Estimate"],
+    Std.Error = coefficients[2, "Std. Error"],
+    z_value = coefficients[2, "z value"],
+    Pr = coefficients[2, "Pr(>|z|)"]
+  )
+  result_df <- rbind(result_df, row)
+}
+
+result_df_formatted <- format(result_df, digits = 3)
+rownames(result_df_formatted) <- NULL
+print(result_df_formatted)
+
+
+```
+1e
+```{r}
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+
+univariate_df <- result_df %>%
+  select(Predictor, Estimate) %>%
+  mutate(Source = "Univariate")
+
+multivariate_df <- data.frame(
+  Predictor = rownames(summary(logit_model)$coefficients[-1,]),
+  Estimate = summary(logit_model)$coefficients[-1, "Estimate"]
+) %>%
+  mutate(Source = "Multivariate")
+
+data.combined <- bind_rows(univariate_df, multivariate_df)
+
+ggplot(data.combined,
+       aes(x = Source, y = Estimate, group = Predictor, color = Predictor)) +
+  geom_line(size = 0.7) +
+  geom_point(size = 1.5) +
+  theme_minimal() +
+  labs(title = "Comparison of Predictor Estimates",
+       subtitle = "Univariate vs. Multivariate Logistic Regression",
+       x = "Source",
+       y = "Estimate")
+
+```
+2a
+```{r}
+univariate_bmi_model <- glm(prog_cat ~ bmi, data = data, family = binomial)
+summary(univariate_bmi_model)
+```
+
+2b
+```{r}
+PredictedProbability <- function(bmi_values, beta_bmi) {
+  log_odds <- univariate_bmi_model$coefficients[1] + bmi_values * beta_bmi
+  
+  predicted_probabilities <- exp(log_odds) / (1 + exp(log_odds))
+  return(predicted_probabilities)
+}
+
+beta_bmi_est <- coef(univariate_bmi_model)["bmi"]
+
+example_bmi_value <- 0.5
+
+predicted_probability <- PredictedProbability(example_bmi_value, beta_bmi_est)
+cat("Predicted probability for BMI =", example_bmi_value, "is:", predicted_probability, "\n")
+```
+
+2c
+```{r}
+bmi_range <- seq(-3, 3, 0.01)
+predicted_probs <- PredictedProbability(bmi_range, beta_bmi_est)
+
+ggplot(data.frame(BMI = bmi_range, Predicted_Probability = predicted_probs),
+       aes(x = BMI, y = Predicted_Probability)) +
+  geom_line() +
+  theme_minimal() +
+  labs(title = "Predicted Probability vs. BMI",
+       x = "BMI",
+       y = "Predicted Probability")
+```
+
+2d
+```{r}
+LogLikelihood <- function(beta_bmi) {
+  predicted_probs <- PredictedProbability(data$bmi, beta_bmi)
+  log_likelihood <- sum(data$prog_cat * log(predicted_probs) + (1 - data$prog_cat) * log(1 - predicted_probs))
+  return(log_likelihood)
+}
+
+beta_bmi_range <- seq(0, 3, 0.1)
+
+log_likelihoods <- sapply(beta_bmi_range, LogLikelihood)
+
+log_likelihood_results <- data.frame(Beta_BMI = beta_bmi_range, Log_Likelihood = log_likelihoods)
+
+print(log_likelihood_results)
+```
+
+2e
+```{r}
+beta_bmi_range <- seq(0, 3, 0.01)
+log_likelihoods <- sapply(beta_bmi_range, LogLikelihood)
+
+ggplot(data.frame(Beta_BMI = beta_bmi_range, Log_Likelihood = log_likelihoods),
+       aes(x = Beta_BMI, y = Log_Likelihood)) +
+  geom_line() +
+  theme_minimal() +
+  labs(title = "Log Likelihood vs. Beta_BMI",
+       x = "Beta_BMI",
+       y = "Log Likelihood")
+```
+

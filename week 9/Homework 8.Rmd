@@ -1,0 +1,103 @@
+---
+title: "Homework 8"
+output: html_document
+date: "2023-03-26"
+---
+
+```{r}
+
+Sensitivity <- function(pred,truth){
+  pred <- as.logical(pred)
+  truth <- as.logical(truth)
+  
+  true_positives <- sum(pred & truth)
+  false_negatives <- sum(!pred & truth)
+  
+  sensitivity <- true_positives / (true_positives + false_negatives)
+  return(sensitivity)
+}
+
+Specificity <- function(pred,truth){
+  pred <- as.logical(pred)
+  truth <- as.logical(truth)
+  
+  true_negatives <- sum(!pred & !truth)
+  false_positive <- sum(pred & !truth)
+  
+  specificity <- true_negatives/(true_negatives+false_positive)
+  return (specificity)
+}
+
+Precision <- function(pred,truth){
+  pred <- as.logical(pred)
+  truth <- as.logical(truth)
+  true_positives <- sum(pred & truth)
+  false_positives <- sum(pred & !truth)
+  precision <- true_positives / (true_positives + false_positives)
+  return(precision)
+}
+
+Recall <- function(pred,truth){
+  return(sensitivity(pred,truth))
+}
+
+F1 <- function(pred, truth) {
+  precision <- Precision(pred, truth)
+  recall <- Recall(pred, truth)
+  
+  f1 <- 2 * (precision * recall) / (precision + recall)
+  return(f1)
+}
+```
+
+
+```{r}
+library(tidyverse)
+
+data <- tribble(
+  ~Class, ~n, ~x1_mean, ~x1_sd, ~x2_mean, ~x2_sd,
+  "A", 800, 7.0, 4.0, 1.0, 1.0,
+  "B", 150, 1.0, 1.0, 7.0, 4.0,
+  "C", 50, 1.0, 1.0, 1.0, 1.0
+)
+
+print(data)
+
+class_prob <- data$n / sum(data$n)
+GaussProb <- function(x, m, s) {
+  return((1 / (s * sqrt(2 * pi))) * exp(-0.5 * ((x - m) / s)^2))
+}
+
+GaussProbA <- function(x1, x2) {
+  a_row <- data[data$Class == "A", ]
+  return(GaussProb(x1, a_row$x1_mean, a_row$x1_sd) * GaussProb(x2, a_row$x2_mean, a_row$x2_sd))
+}
+
+GaussProbB <- function(x1, x2) {
+  b_row <- data[data$Class == "B", ]
+  return(GaussProb(x1, b_row$x1_mean, b_row$x1_sd) * GaussProb(x2, b_row$x2_mean, b_row$x2_sd))
+}
+
+GaussProbC <- function(x1, x2) {
+  c_row <- data[data$Class == "C", ]
+  return(GaussProb(x1, c_row$x1_mean, c_row$x1_sd) * GaussProb(x2, c_row$x2_mean, c_row$x2_sd))
+}
+
+ClassProb <- function(x1, x2) {
+  probs <- c(GaussProbA(x1, x2), GaussProbB(x1, x2), GaussProbC(x1, x2)) * class_prob
+  return(probs / sum(probs))
+}
+
+most_likely_class <- function(x1, x2) {
+  probs <- ClassProb(x1, x2)
+  cat(probs)
+  return(data$Class[which.max(probs)])
+}
+
+cat("\nMost likely class for (1, 1):", most_likely_class(1, 1), "\n")
+cat("\nMost likely class for (7, 1):", most_likely_class(7, 1), "\n")
+cat("\nMost likely class for (1, 7):", most_likely_class(1, 7), "\n")
+
+
+```
+My best guess for why Class A is the most likely class for (1,1) is because no. of samples is greatest for class A (highest class prob). Class A has high prior probability and relatively high Gaussian probabilities for both x1 and x2.

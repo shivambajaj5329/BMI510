@@ -1,0 +1,85 @@
+```{r}
+
+bonf_holm <- function(p, alpha = 0.05){
+  adj_p <- p.adjust(p,method = "holm")
+  signi <- adj_p <= alpha
+  return(signi)
+}
+
+fdr <- function(p, alpha = 0.05) {
+  adj_p <- p.adjust(p, method = "fdr")
+  signi <- adj_p <= alpha
+  return(signi)
+}
+
+bonf_holm_manual_cal <- function(p,alpha=0.05){
+  n <- length(p)
+  sort_p <- sort(p)
+  sort_idx <- order(p)
+  
+  adj_p <- rep(0,n)
+  
+  for(i in 1:n){
+    adj_p[sort_idx[i]] <- min(1,n*sort_p[i]/(n+1-i))
+  }
+  signi <- adj_p <= alpha
+  return(signi)
+}
+
+fdr_manual <- function(p, alpha = 0.05) {
+  n <- length(p)
+  sort_p <- sort(p)
+  sort_idx <- order(p)
+  adj_p <- rep(0, n)
+  
+  for (i in n:1) {
+    if (i == n) {
+      adj_p[sort_idx[i]] <- min(1, n * sort_p[i] / i)
+    } else {
+      adj_p[sort_idx[i]] <- min(adj_p[sort_idx[i + 1]], i * sort_p[i] / n)
+    }
+  }
+  
+  signi <- adj_p <= alpha
+  return(signi)
+}
+
+p_values <- c(0.0025, 0.0050, 0.0075, 0.0100, 0.0125, 0.0150, 0.0175, 0.0200, 0.0225, 0.0250)
+print(bonf_holm(p_values))
+print(fdr(p_values))
+
+print(bonf_holm_manual_cal(p_values))
+print(fdr_manual(p_values))
+
+```
+
+```{r}
+
+library(readr)
+url <- "https://jlucasmckay.bmi.emory.edu/global/bmi510/csf.csv"
+csf_data <- read_csv(url)
+csf_data_complete <- csf_data[!is.na(csf_data$Ab42), ]
+
+anova_result <- aov(Ab42 ~ Group, data = csf_data_complete)
+
+anova_summary <- summary(anova_result)
+
+print(anova_summary)
+
+SSGROUP <- anova_summary[[1]]$`Sum Sq`[1]
+SSERROR <- anova_summary[[1]]$`Sum Sq`[2]
+MSGROUP <- anova_summary[[1]]$`Mean Sq`[1]
+MSERROR <- anova_summary[[1]]$`Mean Sq`[2]
+F_statistic <- anova_summary[[1]]$`F value`[1]
+p_value <- anova_summary[[1]]$`Pr(>F)`[1]
+
+print(paste("SSGROUP:", SSGROUP))
+print(paste("SSERROR:", SSERROR))
+print(paste("MSGROUP:", MSGROUP))
+print(paste("MSERROR:", MSERROR))
+print(paste("F-statistic:", F_statistic))
+print(paste("p-value:", p_value))
+
+
+```
+
